@@ -20,6 +20,23 @@ def display_invalid_option(menu_selection):
 def is_valid_pizza(pizza_selection, pizzas):
 	return pizza_selection.isdigit() and int(pizza_selection)-1 < len(pizzas)
 
+def display_pizzas(pizzas):
+	if len(pizzas) > 0:
+		for index, pizza in enumerate(pizzas):
+			print("{}: {}  cost: ${:,.2f}".format(index+1, pizza["name"], pizza["cost"])),
+	else:
+		print("No pizzas found.")
+
+def display_total_costs(pizzas):
+	total_cost = sum([pizza["cost"] for pizza in pizzas])
+	print("===================")
+	print("TOTAL COST: ${:,.2f}".format(total_cost))
+
+def display_order(pizzas):
+	display_pizzas(pizzas)
+	display_total_costs(pizzas)
+	print("\n\n")
+
 def add_to_order():
 	"""
 	Prompts for adding pizza to the order
@@ -27,8 +44,7 @@ def add_to_order():
 
 	while True:
 		print("\n")
-		for index, pizza in enumerate(PIZZAS):
-			print("{}: {}".format(index+1, pizza["name"]))
+		display_pizzas(PIZZAS)
 		print("0: Go back")
 
 		pizza_selection = input("\nWhich pizza would you like to order?")
@@ -36,13 +52,47 @@ def add_to_order():
 		if pizza_selection == "0":
 			break
 		elif is_valid_pizza(pizza_selection, PIZZAS):
-			my_pizzas.append(PIZZAS[int(pizza_selection) - 1])
+			my_pizzas.append(PIZZAS[int(pizza_selection)-1])
 		else:
 			display_invalid_option(pizza_selection)
 
 		print(my_pizzas)
 
+def remove_from_order():
+	"""
+	Remove a pizza from my_pizzas based on user's input
+	"""
+
+	global my_pizzas
+
+	while True:
+		print("\n")
+		display_order(my_pizzas)
+		print("0: Go back")
+
+		pizza_selection = input("\nWhich pizza would you like to remove?")
+
+		if pizza_selection == "0":
+			break
+		elif is_valid_pizza(pizza_selection, my_pizzas):
+			del my_pizzas[int(pizza_selection) - 1]
+		else:
+			display_invalid_option(pizza_selection)
+
+		print(my_pizzas)
+
+def order_pizza(pizzas):
+	global my_pizzas
+	if len(pizzas) > 0:
+		print("Thank youfor your order!")
+		my_pizzas = []
+	else:
+		print("Please add pizzas to your order before completing the order\n")
+		return False
+
 def main():
+	global my_pizzas
+
 	MENU_ITEMS = (
 		"1: Add Pizza to Order",
 		"2: Remove Pizza from Order",
@@ -61,13 +111,13 @@ def main():
 			break
 		elif menu_selection == "1":
 			add_to_order()
-			pass
 		elif menu_selection == "2":
-			pass
+			remove_from_order(my_pizzas)
 		elif menu_selection == "3":
-			pass
+			display_order(my_pizzas)
 		elif menu_selection == "4":
-			pass
+			display_order(my_pizzas)
+			order_pizza()
 		else:
 			display_invalid_option(menu_selection)
 
